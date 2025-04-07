@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base href="/">
+    <link rel="stylesheet" href="style.css">
+    <title>Gestione delle Persone</title>
+    <script>
+        // Funzione per la conferma di eliminazione
+        function confermaEliminazione(event) {
+            const conferma = confirm("Sei sicuro di voler eliminare questa persona?");
+            if (!conferma) {
+                event.preventDefault(); // Interrompe l'invio del form se l'utente non conferma
+            }
+        }
+
+        // Funzione di validazione per il form di aggiunta
+        function validaAggiunta(event) {
+            const nome = document.forms["aggiungiPersona"]["nome"].value;
+            const cognome = document.forms["aggiungiPersona"]["cognome"].value;
+            const anniAnzianita = document.forms["aggiungiPersona"]["anniAnzianitaLavorativa"].value;
+            const retribuzione = document.forms["aggiungiPersona"]["retribuzioneAnnua"].value;
+
+            // Verifica che i campi Nome e Cognome siano solo lettere
+            const regex = /^[A-Za-zàèéìòùÀÈÉÌÒÙ' ]+$/; // Lettere, spazi e apostrofi
+            if (!regex.test(nome) || !regex.test(cognome)) {
+                alert("Il nome e il cognome possono contenere solo lettere, spazi e apostrofi.");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+
+            // Altre validazioni
+            if (!nome || !cognome || !anniAnzianita || !retribuzione) {
+                alert("Tutti i campi sono obbligatori!");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+            if (anniAnzianita < 0 || anniAnzianita > 50) {
+                alert("Gli anni di anzianità devono essere tra 0 e 50.");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+            if (retribuzione < 1 || retribuzione > 9999999999) {
+                alert("La retribuzione deve essere un valore positivo.");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+            return true;
+        }
+
+        // Funzione di validazione per l'aggiornamento
+        function validaAggiornamento(event) {
+            const strId = document.forms["aggiornaPersona"]["strId"].value;
+            if (strId <= 0) {
+                alert("L'ID deve essere un numero positivo.");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+            if (!nome || !cognome || !anniAnzianita || !retribuzione) {
+                alert("Tutti i campi sono obbligatori!");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+            if (anniAnzianita < 0 || anniAnzianita > 50) {
+                alert("Gli anni di anzianità devono essere tra 0 e 50.");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+            if (retribuzione < 1 || retribuzione > 9999999999) {
+                alert("La retribuzione deve essere un valore positivo.");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+            return true;
+        }
+
+        // Funzione di validazione per la ricerca
+        function validaAggiornamento(event) {
+            const strId = document.forms["aggiornaPersona"]["strId"].value;
+            if (strId <= 0) {
+                alert("L'ID deve essere un numero positivo.");
+                event.preventDefault(); // Interrompe l'invio del form
+                return false;
+            }
+            return true;
+        }
+
+    </script>
+</head>
+<body>
+    <h1 style="text-align: center;">Gestione delle Persone</h1>
+    <h2 style="text-align: center;color: red;" th:if="${error}" th:text="${error}"></h2>
+    
+
+  	
+    <!-- Form per aggiungere una persona -->
+    <details>
+        <summary>Aggiungi Persona</summary>
+        <form name="aggiungiPersona" action="/home/add" method="post" onsubmit="return validaAggiunta(event)">
+            <label>Nome: <input type="text" name="nome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
+            <label>Cognome: <input type="text" name="cognome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
+            <label>Anni Anzianità: <input type="number" name="anniAnzianitaLavorativa" min="0" max="50" required></label><br>
+            <label>Retribuzione: <input type="number" name="retribuzioneAnnua" min="1" max="9999999999" required></label><br>
+            <button type="submit">Aggiungi</button>
+        </form>
+    </details>
+
+    <details>
+        <summary>Aggiorna Persona</summary>
+        <form name="aggiornaPersona" action="/home/update" method="post" onsubmit="return validaAggiornamento(event)">
+            <label>ID: <input type="number" name="strId" min="1" max="9999" required></label><br>
+            <label>Nome: <input type="text" name="nome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
+            <label>Cognome: <input type="text" name="cognome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
+            <label>Anni Anzianità: <input type="number" name="anniAnzianitaLavorativa" min="0" max="50" required></label><br>
+            <label>Retribuzione: <input type="number" name="retribuzioneAnnua" min="1" max="9999999999" required></label><br>
+            <button type="submit">Aggiorna</button>
+        </form>
+    </details>
+
+    <details>
+        <summary>Elimina Persona</summary>
+        <form action="/home/delete" method="post" onsubmit="return confermaEliminazione(event)">
+            <label>ID: <input type="number" name="strId" min="1" max="9999" required></label><br>
+            <button type="submit">Elimina</button>
+        </form>
+    </details>
+
+    <details>
+        <summary>Cerca Persona</summary>
+        <form name="cercaPersona" action="/home/get" method="get" onsubmit="return validaRicerca(event)">
+            <label>ID: <input type="number" name="strId" min="1" max="9999" required></label><br>
+            <button type="submit">Cerca</button>
+        </form>
+    </details>
+  	
+  	
+
+
+    <!-- Tabella con la lista delle persone -->
+    <h2>Lista delle Persone</h2>
+    <form name="listaCompleta" action="/home">
+    	<button type="submit">LISTA COMPLETA</button>
+    </form>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Anni Anzianità</th>
+                <th>Retribuzione</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="persona : ${persone}">
+                <td th:text="${persona.id}"></td>
+                <td th:text="${persona.nome}"></td>
+                <td th:text="${persona.cognome}"></td>
+                <td th:text="${persona.anniAnzianitaLavorativa}"></td>
+                <td th:text="${persona.retribuzioneAnnua}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</body>
+</html>
