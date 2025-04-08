@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Persone</title>
     <style>
+        /* Aggiungi il CSS qui come nel tuo esempio per lo styling */
         * {
             margin: 0;
             padding: 0;
@@ -143,10 +144,15 @@
 <body>
     <h1>Gestione Persone</h1>
     
+    <!-- Aggiungi messaggi di errore o successo -->
+    <h2 th:if="${error}" th:text="${error}" style="color: red;"></h2>
+    <h2 th:if="${success}" th:text="${success}" style="color: green;"></h2>
+
     <h2>Lista delle Persone</h2>
     <form name="listaCompleta" action="/home">
         <button type="submit">LISTA COMPLETA</button>
     </form>
+
     <table>
         <thead>
             <tr>

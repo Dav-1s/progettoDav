@@ -1,46 +1,57 @@
 package com.davide.azienda.model;
 
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="persona")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipoPersona", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "Persona")
 public class Persona {
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Integer id;
-	private String cognome;
-	private String nome;
-	private int anniAnzianitaLavorativa;
-	private int retribuzioneAnnua;
-	
-	public Persona() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String cognome;
+    private String nome;
+
+    @Column(unique = true)
+    private String matricola;
+
+    @Column(name = "anni_anzianita")
+    private int anniAnzianita;
+    
+    @Column(name = "stipendio_annuo")
+    private int stipendioAnnuo;
+
+    @Enumerated(EnumType.STRING)
+    private TipoPersona tipo;
+
+    public Persona() {
 		// TODO Auto-generated constructor stub
 	}
-	public Persona(Integer id, String cognome, String nome, int anniAnzianitaLavorativa, int retribuzioneAnnua) {
-	    this.id = id;
-	    this.cognome = cognome;
-	    this.nome = nome;
-	    this.anniAnzianitaLavorativa = anniAnzianitaLavorativa;
-	    this.retribuzioneAnnua = retribuzioneAnnua;
+    
+    public Persona(Long id, String nome, String cognome, String matricola, int anniAnzianita, int stipendioAnnuo, TipoPersona tipo) {
+        this.id = id;
+        this.nome = nome;
+        this.cognome = cognome;
+        this.matricola = matricola;
+        this.anniAnzianita = anniAnzianita;
+        this.stipendioAnnuo = stipendioAnnuo;
+        this.tipo = tipo;
+    }
+
+	public Long getId() {
+		return id;
 	}
 
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getCognome() {
@@ -51,30 +62,45 @@ public class Persona {
 		this.cognome = cognome;
 	}
 
-	public Integer getid() {
-		return id;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setid(Integer id) {
-		this.id = id;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public int getAnniAnzianitaLavorativa() {
-		return anniAnzianitaLavorativa;
+	public String getMatricola() {
+		return matricola;
 	}
 
-	public void setAnniAnzianitaLavorativa(int anniAnzianitaLavorativa) {
-		this.anniAnzianitaLavorativa = anniAnzianitaLavorativa;
+	public void setMatricola(String matricola) {
+		this.matricola = matricola;
 	}
 
-	public int getRetribuzioneAnnua() {
-		return retribuzioneAnnua;
+	public int getAnniAnzianita() {
+		return anniAnzianita;
 	}
 
-	public void setRetribuzioneAnnua(int retribuzioneAnnua) {
-		this.retribuzioneAnnua = retribuzioneAnnua;
+	public void setAnniAnzianita(int anniAnzianita) {
+		this.anniAnzianita = anniAnzianita;
 	}
-	
-	
 
+	public int getStipendioAnnuo() {
+		return stipendioAnnuo;
+	}
+
+	public void setStipendioAnnuo(int stipendioAnnuo) {
+		this.stipendioAnnuo = stipendioAnnuo;
+	}
+
+	public TipoPersona getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(TipoPersona tipo) {
+		this.tipo = tipo;
+	}
+    
+    
 }

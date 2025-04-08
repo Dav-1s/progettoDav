@@ -1,25 +1,37 @@
 package com.davide.azienda.dto;
 
-public class PersonaDto {
+import com.davide.azienda.model.TipoPersona;
 
-    private Integer id;
+public class PersonaDTO {
+    private Long id;
     private String nome;
     private String cognome;
-    private int anniAnzianitaLavorativa;
-    private int retribuzioneAnnua;
-
-    public PersonaDto() {
-        // TODO Auto-generated constructor stub
-    }
+    private String matricola;
+    private int anniAnzianita;
+    private int stipendioAnnuo;
+    private TipoPersona tipo;
     
-    @Override
-    public String toString() {
-    	// TODO Auto-generated method stub
-    	return "id: " + this.id
-    			+ "nome: " + this.nome
-    			+ "cognome: " + this.cognome
-    			+ "anni di anzianità lavorativa: " + this.anniAnzianitaLavorativa
-    			+ "retribuzione annua: " + this.retribuzioneAnnua;
+    
+
+    public PersonaDTO() {
+    }
+
+    public PersonaDTO(Long id, String nome, String cognome, String matricola, int anniAnzianita, int stipendioAnnuo, TipoPersona tipo) {
+        this.id = id;
+        this.nome = nome;
+        this.cognome = cognome;
+        this.matricola = matricola;
+        this.anniAnzianita = anniAnzianita;
+        this.stipendioAnnuo = stipendioAnnuo;
+        this.tipo = tipo;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -38,27 +50,37 @@ public class PersonaDto {
         this.cognome = cognome;
     }
 
-    public Integer getId() {  // Cambiato da getid() a getId()
-        return id;
+    public String getMatricola() {
+        return matricola;
     }
 
-    public void setId(Integer id) {  // Cambiato da setid() a setId()
-        this.id = id;
+    public void setMatricola(String matricola) {
+        this.matricola = matricola;
     }
 
-    public int getAnniAnzianitaLavorativa() {
-        return anniAnzianitaLavorativa;
+    public int getAnniAnzianita() {
+        return anniAnzianita;
     }
 
-    public void setAnniAnzianitaLavorativa(int anniAnzianitaLavorativa) {
-        this.anniAnzianitaLavorativa = anniAnzianitaLavorativa;
+    public void setAnniAnzianita(int anniAnzianita) {
+        this.anniAnzianita = anniAnzianita;
     }
 
-    public int getRetribuzioneAnnua() {
-        return retribuzioneAnnua;
+    public TipoPersona getTipo() {
+        return tipo;
     }
 
-    public void setRetribuzioneAnnua(int retribuzioneAnnua) {
-        this.retribuzioneAnnua = retribuzioneAnnua;
+    public void setTipo(TipoPersona tipo) {
+        this.tipo = tipo;
     }
+
+	public int getStipendioAnnuo() {
+		return stipendioAnnuo;
+	}
+
+	public void setStipendioAnnuo(int stipendioAnnuo) {
+		this.stipendioAnnuo = stipendioAnnuo;
+	}
 }
+    
+    

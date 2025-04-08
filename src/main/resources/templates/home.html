@@ -17,8 +17,8 @@
         function validaAggiunta(event) {
             const nome = document.forms["aggiungiPersona"]["nome"].value;
             const cognome = document.forms["aggiungiPersona"]["cognome"].value;
-            const anniAnzianita = document.forms["aggiungiPersona"]["anniAnzianitaLavorativa"].value;
-            const retribuzione = document.forms["aggiungiPersona"]["retribuzioneAnnua"].value;
+            const anniAnzianita = document.forms["aggiungiPersona"]["anniAnzianita"].value;
+            const tipo = document.forms["aggiungiPersona"]["tipo"].value;
 
             // Verifica che i campi Nome e Cognome siano solo lettere
             const regex = /^[A-Za-zàèéìòùÀÈÉÌÒÙ' ]+$/; // Lettere, spazi e apostrofi
@@ -29,18 +29,13 @@
             }
 
             // Altre validazioni
-            if (!nome || !cognome || !anniAnzianita || !retribuzione) {
+            if (!nome || !cognome || !anniAnzianita || !tipo) {
                 alert("Tutti i campi sono obbligatori!");
                 event.preventDefault(); // Interrompe l'invio del form
                 return false;
             }
             if (anniAnzianita < 0 || anniAnzianita > 50) {
                 alert("Gli anni di anzianità devono essere tra 0 e 50.");
-                event.preventDefault(); // Interrompe l'invio del form
-                return false;
-            }
-            if (retribuzione < 1 || retribuzione > 9999999999) {
-                alert("La retribuzione deve essere un valore positivo.");
                 event.preventDefault(); // Interrompe l'invio del form
                 return false;
             }
@@ -50,12 +45,17 @@
         // Funzione di validazione per l'aggiornamento
         function validaAggiornamento(event) {
             const strId = document.forms["aggiornaPersona"]["strId"].value;
+            const nome = document.forms["aggiornaPersona"]["nome"].value;
+            const cognome = document.forms["aggiornaPersona"]["cognome"].value;
+            const anniAnzianita = document.forms["aggiornaPersona"]["anniAnzianita"].value;
+            const tipo = document.forms["aggiornaPersona"]["tipo"].value;
+
             if (strId <= 0) {
                 alert("L'ID deve essere un numero positivo.");
                 event.preventDefault(); // Interrompe l'invio del form
                 return false;
             }
-            if (!nome || !cognome || !anniAnzianita || !retribuzione) {
+            if (!nome || !cognome || !anniAnzianita || !tipo) {
                 alert("Tutti i campi sono obbligatori!");
                 event.preventDefault(); // Interrompe l'invio del form
                 return false;
@@ -65,17 +65,12 @@
                 event.preventDefault(); // Interrompe l'invio del form
                 return false;
             }
-            if (retribuzione < 1 || retribuzione > 9999999999) {
-                alert("La retribuzione deve essere un valore positivo.");
-                event.preventDefault(); // Interrompe l'invio del form
-                return false;
-            }
             return true;
         }
 
         // Funzione di validazione per la ricerca
-        function validaAggiornamento(event) {
-            const strId = document.forms["aggiornaPersona"]["strId"].value;
+        function validaRicerca(event) {
+            const strId = document.forms["cercaPersona"]["strId"].value;
             if (strId <= 0) {
                 alert("L'ID deve essere un numero positivo.");
                 event.preventDefault(); // Interrompe l'invio del form
@@ -88,34 +83,53 @@
 </head>
 <body>
     <h1 style="text-align: center;">Gestione delle Persone</h1>
-    <h2 style="text-align: center;color: red;" th:if="${error}" th:text="${error}"></h2>
-    
 
-  	
+    <!-- Messaggio di errore o successo -->
+    <h2 style="text-align: center;color: red;" th:if="${error}" th:text="${error}"></h2>
+    <h2 style="text-align: center;color: green;" th:if="${success}" th:text="${success}"></h2>
+
     <!-- Form per aggiungere una persona -->
     <details>
         <summary>Aggiungi Persona</summary>
         <form name="aggiungiPersona" action="/home/add" method="post" onsubmit="return validaAggiunta(event)">
             <label>Nome: <input type="text" name="nome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
             <label>Cognome: <input type="text" name="cognome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
-            <label>Anni Anzianità: <input type="number" name="anniAnzianitaLavorativa" min="0" max="50" required></label><br>
-            <label>Retribuzione: <input type="number" name="retribuzioneAnnua" min="1" max="9999999999" required></label><br>
+            <label>Matricola: <input type="text" name="matricola" required></label><br>
+            <label>Anni Anzianità: <input type="number" name="anniAnzianita" min="0" max="50" required></label><br>
+            <label>Tipo: 
+                <select name="tipo" required>
+                    <option value="Amministratore">Amministratore</option>
+                    <option value="Dirigente">Dirigente</option>
+                    <option value="Progettista">Progettista</option>
+                    <option value="Stagista">Stagista</option>
+                </select>
+            </label><br>
             <button type="submit">Aggiungi</button>
         </form>
     </details>
 
+    <!-- Form per aggiornare una persona -->
     <details>
         <summary>Aggiorna Persona</summary>
         <form name="aggiornaPersona" action="/home/update" method="post" onsubmit="return validaAggiornamento(event)">
             <label>ID: <input type="number" name="strId" min="1" max="9999" required></label><br>
             <label>Nome: <input type="text" name="nome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
             <label>Cognome: <input type="text" name="cognome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
-            <label>Anni Anzianità: <input type="number" name="anniAnzianitaLavorativa" min="0" max="50" required></label><br>
-            <label>Retribuzione: <input type="number" name="retribuzioneAnnua" min="1" max="9999999999" required></label><br>
+            <label>Matricola: <input type="text" name="matricola" required></label><br>
+            <label>Anni Anzianità: <input type="number" name="anniAnzianita" min="0" max="50" required></label><br>
+            <label>Tipo: 
+                <select name="tipo" required>
+                    <option value="Amministratore">Amministratore</option>
+                    <option value="Dirigente">Dirigente</option>
+                    <option value="Progettista">Progettista</option>
+                    <option value="Stagista">Stagista</option>
+                </select>
+            </label><br>
             <button type="submit">Aggiorna</button>
         </form>
     </details>
 
+    <!-- Form per eliminare una persona -->
     <details>
         <summary>Elimina Persona</summary>
         <form action="/home/delete" method="post" onsubmit="return confermaEliminazione(event)">
@@ -124,6 +138,7 @@
         </form>
     </details>
 
+    <!-- Form per cercare una persona -->
     <details>
         <summary>Cerca Persona</summary>
         <form name="cercaPersona" action="/home/get" method="get" onsubmit="return validaRicerca(event)">
@@ -131,36 +146,35 @@
             <button type="submit">Cerca</button>
         </form>
     </details>
-  	
-  	
-
 
     <!-- Tabella con la lista delle persone -->
     <h2>Lista delle Persone</h2>
     <form name="listaCompleta" action="/home">
-    	<button type="submit">LISTA COMPLETA</button>
+        <button type="submit">LISTA COMPLETA</button>
     </form>
     <table border="1">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nome</th>
-                <th>Cognome</th>
-                <th>Anni Anzianità</th>
-                <th>Retribuzione</th>
+            	<th>Nome</th>
+            	<th>Cognome</th>
+            	<th>Matricola</th>
+            	<th>Anni Anzianità</th>
+            	<th>Tipo</th>
+            	<th>Stipendio annuo</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="persona : ${persone}">
                 <td th:text="${persona.id}"></td>
-                <td th:text="${persona.nome}"></td>
-                <td th:text="${persona.cognome}"></td>
-                <td th:text="${persona.anniAnzianitaLavorativa}"></td>
-                <td th:text="${persona.retribuzioneAnnua}"></td>
+            	<td th:text="${persona.nome}"></td>
+            	<td th:text="${persona.cognome}"></td>
+            	<td th:text="${persona.matricola}"></td>
+            	<td th:text="${persona.anniAnzianita}"></td>
+            	<td th:text="${persona.tipo}"></td>
+            	<td th:text="${persona.stipendioAnnuo}"></td>
             </tr>
         </tbody>
     </table>
-
-
 </body>
 </html>
