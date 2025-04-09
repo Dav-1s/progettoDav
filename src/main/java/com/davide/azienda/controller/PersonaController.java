@@ -1,5 +1,6 @@
 package com.davide.azienda.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,21 +12,51 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
+import com.davide.azienda.dto.AmministratoreDTO;
+import com.davide.azienda.dto.DirigenteDTO;
+import com.davide.azienda.dto.DivisioneDTO;
 import com.davide.azienda.dto.PersonaDTO;
+import com.davide.azienda.dto.ProgettistaDTO;
+import com.davide.azienda.dto.StagistaDTO;
 import com.davide.azienda.model.TipoPersona;
+import com.davide.azienda.service.AmministratoreService;
+import com.davide.azienda.service.DivisioneService;
 import com.davide.azienda.service.PersonaService;
+import com.davide.azienda.service.DirigenteService;
+import com.davide.azienda.service.ProgettistaService;
+import com.davide.azienda.service.StagistaService;
 
 @Controller
 @RequestMapping
 public class PersonaController {
 
     @Autowired
-    private PersonaService service;
+    private PersonaService servicePer;
+    
+    @Autowired
+    private AmministratoreService serviceAmm;
+    
+    @Autowired
+    private DirigenteService serviceDir;
+    
+    @Autowired
+    private ProgettistaService servicePro;
+    
+    @Autowired
+    private StagistaService serviceSta;
+    
+    @Autowired
+    private DivisioneService serviceDiv;
 
     @GetMapping("/home")
     public String home(Model model) {
-        List<PersonaDTO> persone = service.findAllPer();
+        List<PersonaDTO> persone = servicePer.findAllPer();
         model.addAttribute("persone", persone);
+        
+        List<DivisioneDTO> divisioni = serviceDiv.findAllDiv();
+        model.addAttribute("divisioni", divisioni);
+        
         return "home";  
     }
     
@@ -33,7 +64,7 @@ public class PersonaController {
     public String getPersona(@RequestParam String strId, Model model) {
         try {
             Long id = Long.parseLong(strId);
-            Optional<PersonaDTO> opDto = service.findPerById(id);
+            Optional<PersonaDTO> opDto = servicePer.findPerById(id);
             PersonaDTO dto = null;
             if (opDto.isPresent()) {
                 dto = opDto.get();
@@ -51,7 +82,7 @@ public class PersonaController {
         }
 
         Long id = Long.parseLong(strId);
-        Optional<PersonaDTO> opDto = service.findPerById(id);
+        Optional<PersonaDTO> opDto = servicePer.findPerById(id);
         PersonaDTO dto = null;
         if (opDto.isPresent()) {
             dto = opDto.get();
@@ -60,46 +91,61 @@ public class PersonaController {
         
         return "home";  
     }
+    
+    @PostMapping("/home/addDivisione")
+    public String addDivisione(
+        @RequestParam String nome, 
+        @RequestParam(required = false) Long idDirigente, 
+        Model model) {
+
+        try {
+            
+            DivisioneDTO dto = new DivisioneDTO();
+            dto.setNome(nome);
+            dto.setIdDirigente(idDirigente);  
+            
+            
+            serviceDiv.saveDiv(dto); 
+            
+            model.addAttribute("success", "Divisione aggiunta con successo!");
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Errore nell'aggiunta della divisione.");
+        }
+        List<PersonaDTO> persone = servicePer.findAllPer();
+        model.addAttribute("persone", persone);
+        
+        List<DivisioneDTO> divisioni = serviceDiv.findAllDiv();
+        model.addAttribute("divisioni", divisioni);
+        
+        
+        return "home";
+    }
+
 
     @PostMapping("/home/add")
     public String addPersona(
     	@RequestParam String nome, 
-        @RequestParam String cognome, 
-        @RequestParam String matricola, 
-        @RequestParam int anniAnzianita,  
-        @RequestParam String tipo,
+        @RequestParam String cognome,
         Model model) {
 
         try {
             PersonaDTO dto = new PersonaDTO();
             dto.setNome(nome);
             dto.setCognome(cognome);
-        	dto.setMatricola(matricola);
-            dto.setAnniAnzianita(0+anniAnzianita);
-        	TipoPersona tipoPersona = TipoPersona.valueOf(tipo);
-            dto.setTipo(tipoPersona);
-            int stipendioAmm = 130000;
-            int stipendioDir = 70000;
-            int stipendioPro = 40000;
-            int stipendioSta = 0;
             
-            if (tipoPersona == TipoPersona.Amministratore) {
-            	dto.setStipendioAnnuo(stipendioAmm);
-            } else if (tipoPersona == TipoPersona.Dirigente) {
-            	dto.setStipendioAnnuo(stipendioDir);
-            } else if (tipoPersona == TipoPersona.Progettista) {
-            	dto.setStipendioAnnuo(stipendioPro);
-            } else if (tipoPersona == TipoPersona.Stagista) {
-            	dto.setStipendioAnnuo(stipendioSta);
-            }
             
-            service.savePer(dto);  // Aggiungo la persona tramite il servizio
+            servicePer.savePer(dto);  // Aggiungo la persona tramite il servizio
             model.addAttribute("success", "Persona aggiunta con successo!");
+            
         } catch (Exception e) {
             model.addAttribute("error", "Errore nell'aggiunta della persona.");
         }
-        List<PersonaDTO> persone = service.findAllPer();
+        List<PersonaDTO> persone = servicePer.findAllPer();
         model.addAttribute("persone", persone);
+        
+        List<DivisioneDTO> divisioni = serviceDiv.findAllDiv();
+        model.addAttribute("divisioni", divisioni);
         return "home";
     }
 
@@ -109,13 +155,16 @@ public class PersonaController {
         @RequestParam String nome, 
         @RequestParam String cognome, 
         @RequestParam String matricola, 
-        @RequestParam int anniAnzianita, 
+        @RequestParam Integer anniAnzianita, 
         @RequestParam String tipo,
+        @RequestParam(required = false) BigDecimal premioDicembre,
+        @RequestParam(required = false) Long strIdDivisione,
+        @RequestParam(required = false) Integer oreStage,
         Model model) {
 
         try {
         	Long id = Long.parseLong(strId);
-            Optional<PersonaDTO> opDto = service.findPerById(id);
+            Optional<PersonaDTO> opDto = servicePer.findPerById(id);
             PersonaDTO dto = null;
             if (opDto.isPresent()) {
             	dto = opDto.get();
@@ -131,17 +180,46 @@ public class PersonaController {
                 int stipendioDir = 70000;
                 int stipendioPro = 40000;
                 int stipendioSta = 0;
+                int stipendioStaA = 30000;
                 
                 if (tipoPersona == TipoPersona.Amministratore) {
                 	dto.setStipendioAnnuo(stipendioAmm);
+                	servicePer.updatePer(id, dto);
+                	AmministratoreDTO ammDto =new AmministratoreDTO();
+                	ammDto.setIdPersona(id);
+                	serviceAmm.saveAmm(ammDto);
                 } else if (tipoPersona == TipoPersona.Dirigente) {
                 	dto.setStipendioAnnuo(stipendioDir);
+                	servicePer.updatePer(id, dto);
+                	DirigenteDTO dirDto = new DirigenteDTO();
+                	dirDto.setPremioDicembre(premioDicembre);
+                	dirDto.setIdDivisione(strIdDivisione);
+                	dirDto.setIdPersona(id);
+                	serviceDir.saveDir(dirDto);
                 } else if (tipoPersona == TipoPersona.Progettista) {
                 	dto.setStipendioAnnuo(stipendioPro);
+                	servicePer.updatePer(id, dto);
+                	ProgettistaDTO proDto = new ProgettistaDTO();
+                	proDto.setIdDivisione(strIdDivisione);
+                	proDto.setIdPersona(id);
+                	servicePro.savePro(proDto);
                 } else if (tipoPersona == TipoPersona.Stagista) {
                 	dto.setStipendioAnnuo(stipendioSta);
+                	servicePer.updatePer(id, dto);
+                	StagistaDTO staDto =new StagistaDTO();
+                	staDto.setIdPersona(id);
+                	serviceSta.saveSta(staDto);
+                	int oreAccumulate = 0 + serviceSta.findStaById(id).get().getOreStage();
+                	staDto.setOreStage(oreAccumulate + oreStage);
+                	serviceSta.saveSta(staDto);
+                	oreAccumulate = 0 + serviceSta.findStaById(id).get().getOreStage();
+                	if (oreAccumulate >= 100) {
+                		dto.setStipendioAnnuo(stipendioStaA);
+                		servicePer.updatePer(id, dto);
+                	}
+                	
                 }
-            	service.updatePer(id, dto);
+                servicePer.updatePer(id, dto);
             	model.addAttribute("success", "Persona aggiornata con successo!");
             	
             } else {
@@ -157,8 +235,8 @@ public class PersonaController {
             model.addAttribute("error", "Errore nell'aggiornamento della persona.");
         }
         Long id = Long.parseLong(strId);
-        if (service.findPerById(id) != null) {
-        	Optional<PersonaDTO> opDto = service.findPerById(id);
+        if (servicePer.findPerById(id) != null) {
+        	Optional<PersonaDTO> opDto = servicePer.findPerById(id);
             PersonaDTO dto = null;
             if (opDto.isPresent()) {
                 dto = opDto.get();
@@ -166,9 +244,12 @@ public class PersonaController {
             }
         	      	
         } else {
-        	List<PersonaDTO> persone = service.findAllPer();
-            model.addAttribute("persone", persone); 
+        	List<PersonaDTO> persone = servicePer.findAllPer();
+            model.addAttribute("persone", persone);
+            
         }
+        List<DivisioneDTO> divisioni = serviceDiv.findAllDiv();
+        model.addAttribute("divisioni", divisioni);
         return "home";
     }
 
@@ -177,13 +258,13 @@ public class PersonaController {
         try {
         	Long id = Long.parseLong(strId);
             Optional<PersonaDTO> opDto = null;
-            opDto = service.findPerById(id);
+            opDto = servicePer.findPerById(id);
             PersonaDTO dto = opDto.get();
-            if (service.findPerById(id) == null) {
+            if (servicePer.findPerById(id) == null) {
                 model.addAttribute("error", "Persona non trovata.");
                 return "home";
             }
-            service.deletePer(id);
+            servicePer.deletePer(id);
             model.addAttribute("success", "Persona eliminata con successo!");
         } catch (NumberFormatException e) {
             model.addAttribute("error", "ID non valido.");
@@ -193,8 +274,11 @@ public class PersonaController {
         } catch (Exception e) {
             model.addAttribute("error", "Errore nell'eliminazione della persona.");
         }
-        List<PersonaDTO> persone = service.findAllPer();
+        List<PersonaDTO> persone = servicePer.findAllPer();
         model.addAttribute("persone", persone);
+        
+        List<DivisioneDTO> divisioni = serviceDiv.findAllDiv();
+        model.addAttribute("divisioni", divisioni);
         return "home";
     }
 }

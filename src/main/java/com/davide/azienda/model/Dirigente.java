@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -24,16 +25,21 @@ public class Dirigente {
 
     @Column(name = "premio_dicembre")
     private BigDecimal premioDicembre;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_divisione")
+    private Divisione divisione;
 
     public Dirigente() {
 		// TODO Auto-generated constructor stub
 	}
     
 
-    public Dirigente(Long idPersona, Persona persona, BigDecimal premioDicembre) {
+    public Dirigente(Long idPersona, Persona persona, BigDecimal premioDicembre, Divisione divisione) {
         this.idPersona = idPersona;
         this.persona = persona;
         this.premioDicembre = premioDicembre;
+        this.divisione = divisione;
     }
     
 
@@ -59,5 +65,13 @@ public class Dirigente {
 
 	public void setPremioDicembre(BigDecimal premioDicembre) {
 		this.premioDicembre = premioDicembre;
+	}
+
+	public Divisione getDivisione() {
+		return divisione;
+	}
+
+	public void setDivisione(Divisione divisione) {
+		this.divisione = divisione;
 	}
 }

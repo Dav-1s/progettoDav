@@ -20,18 +20,18 @@ public class Stagista {
     @JoinColumn(name = "id_persona")
     private Persona persona;
 
-    @Column(name = "ore_dicembre")
-    private int oreDicembre;
+    @Column(name = "ore_di_stage")
+    private int oreStage;
 
     public Stagista() {
 		// TODO Auto-generated constructor stub
 	}
     
 
-    public Stagista(Long idPersona, Persona persona, int oreDicembre) {
+    public Stagista(Long idPersona, Persona persona, int oreStage) {
         this.idPersona = idPersona;
         this.persona = persona;
-        this.oreDicembre = oreDicembre;
+        this.oreStage = oreStage;
     }
 
 
@@ -51,12 +51,12 @@ public class Stagista {
 		this.persona = persona;
 	}
 
-	public int getOreDicembre() {
-		return oreDicembre;
+	public int getOreStage() {
+		return oreStage;
 	}
 
-	public void setOreDicembre(int oreDicembre) {
-		this.oreDicembre = oreDicembre;
+	public void setOreStage(int oreStage) {
+		this.oreStage = oreStage;
 	}
     
     

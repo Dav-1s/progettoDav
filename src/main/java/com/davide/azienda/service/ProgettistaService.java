@@ -43,6 +43,8 @@ public class ProgettistaService {
         Persona persona = personaRepository.findById(dto.getIdPersona()).orElse(null);
         Divisione divisione = divisioneRepository.findById(dto.getIdDivisione()).orElse(null);
         Progettista p = ManualMapper.proToEntity(dto, persona, divisione);
+        p.setIdPersona(null);
+        progettistaRepository.deleteById(persona.getId());
         return ManualMapper.proToDTO(progettistaRepository.save(p));
     }
 

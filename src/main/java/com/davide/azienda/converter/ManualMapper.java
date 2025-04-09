@@ -74,12 +74,12 @@ public class ManualMapper {
 
     public static DirigenteDTO dirToDTO(Dirigente d) {
         if (d == null) return null;
-        return new DirigenteDTO(d.getIdPersona(), d.getPremioDicembre());
+        return new DirigenteDTO(d.getIdPersona(), d.getPremioDicembre(), d.getDivisione().getId());
     }
 
-    public static Dirigente dirToEntity(DirigenteDTO dto, Persona persona) {
+    public static Dirigente dirToEntity(DirigenteDTO dto, Persona persona, Divisione divisione) {
         if (dto == null) return null;
-        return new Dirigente(dto.getIdPersona(), persona, dto.getPremioDicembre());
+        return new Dirigente(dto.getIdPersona(), persona, dto.getPremioDicembre(), divisione);
     }
 
     public static AmministratoreDTO ammToDTO(Amministratore a) {
@@ -94,12 +94,12 @@ public class ManualMapper {
 
     public static StagistaDTO staToDTO(Stagista s) {
         if (s == null) return null;
-        return new StagistaDTO(s.getIdPersona(), s.getOreDicembre());
+        return new StagistaDTO(s.getIdPersona(), s.getOreStage());
     }
 
     public static Stagista staToEntity(StagistaDTO dto, Persona persona) {
         if (dto == null) return null;
-        return new Stagista(dto.getIdPersona(), persona, dto.getOreDicembre());
+        return new Stagista(dto.getIdPersona(), persona, dto.getOreStage());
     }
 
 }

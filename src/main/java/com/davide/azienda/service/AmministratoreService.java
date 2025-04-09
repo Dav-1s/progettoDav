@@ -37,6 +37,8 @@ public class AmministratoreService {
     public AmministratoreDTO saveAmm(AmministratoreDTO dto) {
         Persona persona = personaRepository.findById(dto.getIdPersona()).orElse(null);
         Amministratore a = ManualMapper.ammToEntity(dto, persona);
+        a.setIdPersona(null);
+        amministratoreRepository.deleteById(persona.getId());
         return ManualMapper.ammToDTO(amministratoreRepository.save(a));
     }
     

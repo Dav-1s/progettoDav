@@ -3,7 +3,7 @@
 <head>
     <base href="/">
     <link rel="stylesheet" href="style.css">
-    <title>Gestione delle Persone</title>
+    <title>Gestione delle Persone e Divisioni</title>
     <script>
         // Funzione per la conferma di eliminazione
         function confermaEliminazione(event) {
@@ -17,8 +17,6 @@
         function validaAggiunta(event) {
             const nome = document.forms["aggiungiPersona"]["nome"].value;
             const cognome = document.forms["aggiungiPersona"]["cognome"].value;
-            const anniAnzianita = document.forms["aggiungiPersona"]["anniAnzianita"].value;
-            const tipo = document.forms["aggiungiPersona"]["tipo"].value;
 
             // Verifica che i campi Nome e Cognome siano solo lettere
             const regex = /^[A-Za-zàèéìòùÀÈÉÌÒÙ' ]+$/; // Lettere, spazi e apostrofi
@@ -29,13 +27,21 @@
             }
 
             // Altre validazioni
-            if (!nome || !cognome || !anniAnzianita || !tipo) {
+            if (!nome || !cognome) {
                 alert("Tutti i campi sono obbligatori!");
                 event.preventDefault(); // Interrompe l'invio del form
                 return false;
             }
-            if (anniAnzianita < 0 || anniAnzianita > 50) {
-                alert("Gli anni di anzianità devono essere tra 0 e 50.");
+            return true;
+        }
+
+        // Funzione di validazione per l'aggiunta di divisioni
+        function validaAggiuntaDivisione(event) {
+            const nomeDivisione = document.forms["aggiungiDivisione"]["nome"].value;
+            const idDirigente = document.forms["aggiungiDivisione"]["idDirigente"].value;
+
+            if (!nomeDivisione) {
+                alert("Il nome è obbligatorio!");
                 event.preventDefault(); // Interrompe l'invio del form
                 return false;
             }
@@ -78,58 +84,111 @@
             }
             return true;
         }
+        // Funzione per gestire la visibilità delle sezioni in base al tipo selezionato
+        function gestisciTipoPersona() {
+            const tipo = document.getElementById('tipo').value;
 
+            // Nascondi tutte le sezioni
+            const sections = document.querySelectorAll('.tipoSection');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Mostra la sezione corrispondente al tipo selezionato
+            if (tipo === 'Amministratore') {
+                document.getElementById('adminSection').style.display = 'block';
+            } else if (tipo === 'Dirigente') {
+                document.getElementById('dirigenteSection').style.display = 'block';
+            } else if (tipo === 'Progettista') {
+                document.getElementById('progettistaSection').style.display = 'block';
+            } else if (tipo === 'Stagista') {
+                document.getElementById('stagistaSection').style.display = 'block';
+            }
+        }
+
+        // Inizializzare la visibilità delle sezioni al caricamento della pagina
+        window.onload = function() {
+            gestisciTipoPersona(); // Chiamata per gestire la visibilità in base al tipo pre-selezionato
+        };
     </script>
 </head>
 <body>
-    <h1 style="text-align: center;">Gestione delle Persone</h1>
+    <h1 style="text-align: center;">Gestione delle Persone e Divisioni</h1>
 
     <!-- Messaggio di errore o successo -->
     <h2 style="text-align: center;color: red;" th:if="${error}" th:text="${error}"></h2>
     <h2 style="text-align: center;color: green;" th:if="${success}" th:text="${success}"></h2>
-
+    
+    
+    
     <!-- Form per aggiungere una persona -->
     <details>
         <summary>Aggiungi Persona</summary>
         <form name="aggiungiPersona" action="/home/add" method="post" onsubmit="return validaAggiunta(event)">
             <label>Nome: <input type="text" name="nome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
             <label>Cognome: <input type="text" name="cognome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
-            <label>Matricola: <input type="text" name="matricola" required></label><br>
-            <label>Anni Anzianità: <input type="number" name="anniAnzianita" min="0" max="50" required></label><br>
-            <label>Tipo: 
-                <select name="tipo" required>
-                    <option value="Amministratore">Amministratore</option>
-                    <option value="Dirigente">Dirigente</option>
-                    <option value="Progettista">Progettista</option>
-                    <option value="Stagista">Stagista</option>
-                </select>
-            </label><br>
             <button type="submit">Aggiungi</button>
+        </form>
+    </details>
+
+    <!-- Form per aggiungere una divisione -->
+    <details>
+        <summary>Aggiungi Divisione</summary>
+        <form name="aggiungiDivisione" action="/home/addDivisione" method="post" onsubmit="return validaAggiuntaDivisione(event)">
+            <label>Nome Divisione: <input type="text" name="nome" required></label><br>
+            <label>ID Dirigente: <input type="number" name="idDirigente" min="1" ></label><br>
+            <button type="submit">Aggiungi Divisione</button>
         </form>
     </details>
 
     <!-- Form per aggiornare una persona -->
     <details>
         <summary>Aggiorna Persona</summary>
-        <form name="aggiornaPersona" action="/home/update" method="post" onsubmit="return validaAggiornamento(event)">
-            <label>ID: <input type="number" name="strId" min="1" max="9999" required></label><br>
-            <label>Nome: <input type="text" name="nome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
-            <label>Cognome: <input type="text" name="cognome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
-            <label>Matricola: <input type="text" name="matricola" required></label><br>
-            <label>Anni Anzianità: <input type="number" name="anniAnzianita" min="0" max="50" required></label><br>
-            <label>Tipo: 
-                <select name="tipo" required>
-                    <option value="Amministratore">Amministratore</option>
-                    <option value="Dirigente">Dirigente</option>
-                    <option value="Progettista">Progettista</option>
-                    <option value="Stagista">Stagista</option>
-                </select>
-            </label><br>
-            <button type="submit">Aggiorna</button>
-        </form>
-    </details>
+<form name="aggiornaPersona" action="/home/update" method="post" onsubmit="return validaAggiornamento(event)">
+    <label>ID: <input type="number" name="strId" min="1" max="9999" required></label><br>
+    <label>Nome: <input type="text" name="nome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
+    <label>Cognome: <input type="text" name="cognome" pattern="[A-Za-z\u00C0-\u017F' ]+" required></label><br>
+    <label>Matricola: <input type="text" name="matricola" required></label><br>
+    <label>Anni Anzianità: <input type="number" name="anniAnzianita" min="0" max="50" required></label><br>
+    <label>Tipo: 
+        <select name="tipo" id="tipo" required onchange="gestisciTipoPersona()">
+            <option value="Amministratore">Amministratore</option>
+            <option value="Dirigente">Dirigente</option>
+            <option value="Progettista">Progettista</option>
+            <option value="Stagista">Stagista</option>
+        </select>
+    </label><br>
 
-    <!-- Form per eliminare una persona -->
+    <!-- Sezione per Amministratore (non visibile inizialmente) -->
+    <div id="adminSection" class="tipoSection" style="display:none;">
+        <p></p>
+        <!-- Qui puoi aggiungere eventuali campi specifici per Amministratore -->
+    </div>
+
+    <!-- Sezione per Dirigente (non visibile inizialmente) -->
+    <div id="dirigenteSection" class="tipoSection" style="display:none;">
+        <label>Premio Dicembre: <input type="number" name="premioDicembre"></label><br>
+        <label>ID Divisione: <input type="number" name="strIdDivisione" min="1" max="9999"></label><br>
+    </div>
+
+    <!-- Sezione per Progettista (non visibile inizialmente) -->
+    <div id="progettistaSection" class="tipoSection" style="display:none;">
+        <label>ID Divisione: <input type="number" name="strIdDivisione" min="1" max="9999"></label><br>
+    </div>
+
+    <!-- Sezione per Stagista (non visibile inizialmente) -->
+    <div id="stagistaSection" class="tipoSection" style="display:none;">
+        <label>Ore Stage: <input type="number" name="oreStage"></label><br>
+    </div>
+
+    <button type="submit">Aggiorna</button>
+</form>
+
+
+    </details>
+    
+    
+<!-- Form per eliminare una persona -->
     <details>
         <summary>Elimina Persona</summary>
         <form action="/home/delete" method="post" onsubmit="return confermaEliminazione(event)">
@@ -176,5 +235,25 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- Tabella con la lista delle divisioni -->
+    <h2>Lista delle Divisioni</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome Divisione</th>
+                <th>ID Dirigente</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="divisione : ${divisioni}">
+                <td th:text="${divisione.id}"></td>
+                <td th:text="${divisione.nome}"></td>
+                <td th:text="${divisione.idDirigente}"></td>
+            </tr>
+        </tbody>
+    </table>
+
 </body>
 </html>

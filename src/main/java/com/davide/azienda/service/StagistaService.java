@@ -37,6 +37,8 @@ public class StagistaService {
     public StagistaDTO saveSta(StagistaDTO dto) {
         Persona persona = personaRepository.findById(dto.getIdPersona()).orElse(null);
         Stagista s = ManualMapper.staToEntity(dto, persona);
+        s.setIdPersona(null);
+        stagistaRepository.deleteById(persona.getId());
         return ManualMapper.staToDTO(stagistaRepository.save(s));
     }
     

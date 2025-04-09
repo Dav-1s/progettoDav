@@ -39,6 +39,8 @@ public class DivisioneService {
         Persona dirigente = null;
         if (dto.getIdDirigente() != null) {
             dirigente = personaRepository.findById(dto.getIdDirigente()).orElse(null);
+        } else {
+        	dirigente = null;
         }
         Divisione divisione = ManualMapper.divToEntity(dto, dirigente);
         return ManualMapper.divToDTO(divisioneRepository.save(divisione));

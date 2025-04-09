@@ -2,14 +2,14 @@ package com.davide.azienda.dto;
 
 public class StagistaDTO {
     private Long idPersona;
-    private int oreDicembre;
+    private int oreStage;
 
     public StagistaDTO() {
     }
 
-    public StagistaDTO(Long idPersona, int oreDicembre) {
+    public StagistaDTO(Long idPersona, int oreStage) {
         this.idPersona = idPersona;
-        this.oreDicembre = oreDicembre;
+        this.oreStage = oreStage;
     }
 
     public Long getIdPersona() {
@@ -20,11 +20,11 @@ public class StagistaDTO {
         this.idPersona = idPersona;
     }
 
-    public int getOreDicembre() {
-        return oreDicembre;
+    public int getOreStage() {
+        return oreStage;
     }
 
-    public void setOreDicembre(int oreDicembre) {
-        this.oreDicembre = oreDicembre;
+    public void setOreStage(int oreStage) {
+        this.oreStage = oreStage;
     }
 }
